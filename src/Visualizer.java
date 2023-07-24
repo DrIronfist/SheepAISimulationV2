@@ -28,9 +28,12 @@ class MyPanelb extends JPanel implements ActionListener
 {
 	
 	private Timer time;
-    private Vector2 circleStartPos = new Vector2(300, 300);
-    private Vector2 circlePos = circleStartPos;
     private int frame = 0;
+
+    private int spheres = 10000;
+
+    private Vector2[] spherePos = new Vector2[spheres];
+    private double[] sphereRadius = new double[spheres];
 	
 	MyPanelb()
 	{
@@ -38,7 +41,14 @@ class MyPanelb extends JPanel implements ActionListener
 		setSize(800, 810);
 		setVisible(true); //it's like calling the repaint method.
 		time.start();
-	
+        
+        for (int i = 0; i < spheres; i++)
+        {
+            double sphereAngle = Math.random()*2*Math.PI;
+            double sphereDistance = 150 + Math.random()*300;
+            spherePos[i] = new Vector2(Math.cos(sphereAngle)*sphereDistance + 400, Math.sin(sphereAngle)*sphereDistance + 400);
+            sphereRadius[i] = Math.random()*40+10;
+        }
 	}
 	
 	public void paintComponent(Graphics g)
@@ -47,49 +57,56 @@ class MyPanelb extends JPanel implements ActionListener
         g.setColor(Color.white);
         g.fillRect(0, 0, 800, 810);
 
-        g.setColor(Color.black);
-        double circleRadius = 50;
+        // g.setColor(Color.black);
+        // for (int i = 0; i < spheres; i++)
+        // {
+        //     // g.drawArc(
+        //     //     (int) ( spherePos[i].x - sphereRadius[i] ), 
+        //     //     (int) ( spherePos[i].y - sphereRadius[i] ), 
+        //     //     (int) sphereRadius[i]*2, 
+        //     //     (int) sphereRadius[i]*2, 
+        //     //     0, 360);
+        // }
 
-        circlePos = circlePos.add(new Vector2(1, 0));
-        if (circlePos.x > 800)
-            circlePos = circleStartPos;
+        Vector2 rayStart = new Vector2(400, 400);
+        double rayAngle = Math.atan2(Math.sin((double)frame/100), Math.cos((double)frame/100));
+        double rayDistance = 0;
 
-        g.drawArc(
-            (int) (circlePos.x - circleRadius ), 
-            (int) (circlePos.y - circleRadius ), 
-            (int) circleRadius*2, 
-            (int) circleRadius*2, 
-            0, 360);
+        // g.setColor(Color.green);
 
-        Vector2 rayStart = new Vector2(600, 500);
-        double rayAngle = Math.PI / (-2) + Math.sin((double)frame/100);
-        double rayDistance = 1000;
-
-        g.setColor(Color.green);
-        g.drawLine(
-            (int) rayStart.x, 
-            (int) rayStart.y, 
-            (int) (rayStart.x + Math.cos(rayAngle) * rayDistance), 
-            (int) (rayStart.y + Math.sin(rayAngle) * rayDistance)
-            );
-
-        Raycasting.RayResult ray = Raycasting.raycast(rayStart, rayAngle, rayDistance, circlePos, circleRadius);
-
-        Color[] debugColors = new Color[] {Color.red, Color.blue, Color.ORANGE};
-
-        if (ray != null)
+        // g.setColor(Color.red);
+        long startTime = System.nanoTime();
+        
+        for (int i = 0; i < 100; i++)
         {
-            for (int i = 0; i < ray.debugVectors.length; i++)
+            double rangle = rayAngle+(Math.PI*2/100 * i);
+            rangle = Math.atan2(Math.sin(rangle), Math.cos(rangle));
+
+            g.drawLine(
+                (int) rayStart.x, 
+                (int) rayStart.y, 
+                (int) (rayStart.x + Math.cos(rangle) * rayDistance), 
+                (int) (rayStart.y + Math.sin(rangle) * rayDistance)
+                );
+
+            Raycasting.RayResult ray = Raycasting.raycast(rayStart, rangle, rayDistance, spherePos, sphereRadius);
+
+            if (ray != null)
             {
-                g.setColor(debugColors[i]);
+                Vector2 pos = rayStart.add(Vector2.polar(ray.distance, rangle));
                 g.drawArc(
-                    (int) (ray.debugVectors[i].x - 5 ), 
-                    (int) (ray.debugVectors[i].y - 5 ), 
+                    (int) (pos.x - 5 ), 
+                    (int) (pos.y - 5 ), 
                     (int) 5*2, 
                     (int) 5*2, 
                     0, 360);
             }
         }
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime);
+
+        System.out.println(duration/1000000 );
 	}
 	
 	public void actionPerformed(ActionEvent e)

@@ -36,7 +36,7 @@ public class Raycasting {
     public static double compareAngles(double sourceAngle, double otherAngle)
     {
         // sourceAngle and otherAngle should be in the range -180 to 180
-        System.out.println(""+sourceAngle+" "+otherAngle+" "+(otherAngle - sourceAngle));
+        // System.out.println(""+sourceAngle+" "+otherAngle+" "+(otherAngle - sourceAngle));
         double difference = otherAngle - sourceAngle;
 
         if(difference < -Math.PI)
@@ -47,7 +47,7 @@ public class Raycasting {
         return difference;
     }
 
-    public static RayResult raycast(Vector2 pos, double angle, double maxDistance, Vector2 spherePos, double sphereRadius)
+    public static RayResult raycast(Vector2 pos, double angle, double maxDistance, Vector2[] spherePos, double[] sphereRadius)
     {
         double[] abc = convertToABC(pos.x, pos.y, angle);
         double a, b, c;
@@ -56,61 +56,46 @@ public class Raycasting {
         c = abc[2];
 
         int closestIndex = -1;
+        double closestDistance = Double.MAX_VALUE;
 
-        double dist = (Math.abs(a * spherePos.x + b * spherePos.y + c)) / Math.sqrt(a * a + b * b);
-
-        if (sphereRadius >= dist)
+        for (int i = 0; i < spherePos.length; i++)
         {
-            double sphereAngle = Math.atan2(spherePos.y-pos.y, spherePos.x-pos.x);
+            Vector2 sp = spherePos[i];
+            double sr = sphereRadius[i];
+            double dif = compareAngles(angle, Math.atan2(sp.y-pos.y, sp.x-pos.x));
 
+            if (Math.abs(dif) >= Math.PI/2 || sp.sub(pos).magnitude() > maxDistance + sr )
+                continue;
+
+            double dist = (Math.abs(a * sp.x + b * sp.y + c)) / Math.sqrt(a * a + b * b);
+
+            if (sr < dist)
+                continue;
+            
             Vector2 linePoint;
-
-            // Vector2 linePoint = spherePos.add(Vector2.polar(dist, angle+Math.PI/2));
-            // Vector2 linePoint2 = spherePos.add(Vector2.polar(dist, angle-Math.PI/2));
-
             // Is touching
-            double dif = compareAngles(angle, sphereAngle);
-
-            if (Math.abs(dif) >= Math.PI/2)
-                return null;
 
             if (dif < 0)
-                linePoint = spherePos.add(Vector2.polar(dist, angle+Math.PI/2));
+                linePoint = sp.add(Vector2.polar(dist, angle+Math.PI/2));
             else
-                linePoint = spherePos.add(Vector2.polar(dist, angle-Math.PI/2));
+                linePoint = sp.add(Vector2.polar(dist, angle-Math.PI/2));
 
-            double sphereIn = Math.sqrt(sphereRadius*sphereRadius - dist*dist);
+            Vector2 sphereIn = Vector2.polar(Math.sqrt(sr*sr - dist*dist), angle);
 
-            Vector2 p1 = linePoint.add(Vector2.polar(sphereIn, angle));
-            Vector2 p2 = linePoint.sub(Vector2.polar(sphereIn, angle));
+            Vector2 p1 = linePoint.add(sphereIn);
+            Vector2 p2 = linePoint.sub(sphereIn);
 
-            double p1d = p1.sub(pos).magnitude();
-            double p2d = p2.sub(pos).magnitude();
+            double dis = Math.min(p1.sub(pos).magnitude(), p2.sub(pos).magnitude());
 
-            Vector2[] debugArray;
-
-            if (p1d > p2d)
-                debugArray = new Vector2[] {linePoint, p2};
-            else 
-                debugArray = new Vector2[] {linePoint, p1};
-
-            return new Raycasting.RayResult(debugArray);
+            if (dis < closestDistance)
+            {
+                closestIndex = i;
+                closestDistance = dis;
+            }
+            
         }
 
-
-        // for (int i = 0; i < spherePos.length; i++)
-        // {
-        //     double dist = (Math.abs(a * spherePos[i].x + b * spherePos[i].y + c)) / Math.sqrt(a * a + b * b);
-
-        //     if (sphereRadius[i] >= dist)
-        //     {
-        //         // Is touching
-        //         Vector2 linePoint = spherePos[i].add(Vector2.polar(dist, angle+Math.PI/2));
-        //         return new Raycasting.RayResult(linePoint);
-        //     }
-        // }
-
-        return null;
+        return new Raycasting.RayResult(closestIndex, closestDistance);
     }
 
     public double hits(double a, double b, double c, double x, double y, double r)
