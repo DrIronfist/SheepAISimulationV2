@@ -35,8 +35,7 @@ public class Raycasting {
 
     public static double compareAngles(double sourceAngle, double otherAngle)
     {
-        // sourceAngle and otherAngle should be in the range -180 to 180
-        // System.out.println(""+sourceAngle+" "+otherAngle+" "+(otherAngle - sourceAngle));
+        // sourceAngle and otherAngle should be in the range -PI to PI
         double difference = otherAngle - sourceAngle;
 
         if(difference < -Math.PI)
