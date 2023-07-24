@@ -2,7 +2,7 @@
 public class Sheep {
 
    //constants
-   public static double starveRate, starvePenalty, thirstRate, thirstPenalty = 0.01;
+   public static double starveRate,  thirstRate = 0.01;
    public static double maxSpeed = 1;
    public static int maxLifeSpan = 1000;
    public static int matingReq = 180;
@@ -11,13 +11,21 @@ public class Sheep {
    public double hunger = 1;
    public double thirst = 1;
    public int age = 0;
+   public Vector2 pos;
 
    
 
 
-   public  Sheep(){
-
+   public Sheep(Sheep p1, Sheep p2){
+      pos = p1.pos.add(p2.pos).scale(0.5);
    }
+
+   public void tickActions(){
+      age++;
+      hunger -= starveRate;
+      // thirst -= thirstRate;
+   }
+
 
 
 
