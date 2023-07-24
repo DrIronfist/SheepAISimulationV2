@@ -1,3 +1,4 @@
+package NN;
 import java.lang.reflect.InvocationTargetException;
 
 public class Layer {

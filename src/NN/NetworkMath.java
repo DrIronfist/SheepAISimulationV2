@@ -1,3 +1,4 @@
+package NN;
 import java.lang.Math;
 
 public class NetworkMath {

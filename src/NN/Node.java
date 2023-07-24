@@ -1,3 +1,4 @@
+package NN;
 public abstract class Node {
     public double weights[];
     public double bias;

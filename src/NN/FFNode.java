@@ -1,3 +1,4 @@
+package NN;
 public class FFNode extends Node{
     public FFNode(int ic) {
         super(ic);
