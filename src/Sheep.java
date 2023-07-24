@@ -24,6 +24,13 @@ public class Sheep {
       // thirst -= thirstRate;
    }
 
+   public void eat(){
+      hunger+= 0.75;
+      if(hunger > 1){
+         hunger = 1;
+      }
+   }
+
 
 
 
