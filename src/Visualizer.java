@@ -30,7 +30,7 @@ class MyPanelb extends JPanel implements ActionListener
 	private Timer time;
     private int frame = 0;
 
-    private int spheres = 10000;
+    private int spheres = 1000;
 
     private Vector2[] spherePos = new Vector2[spheres];
     private double[] sphereRadius = new double[spheres];
@@ -57,24 +57,24 @@ class MyPanelb extends JPanel implements ActionListener
         g.setColor(Color.white);
         g.fillRect(0, 0, 800, 810);
 
-        // g.setColor(Color.black);
-        // for (int i = 0; i < spheres; i++)
-        // {
-        //     // g.drawArc(
-        //     //     (int) ( spherePos[i].x - sphereRadius[i] ), 
-        //     //     (int) ( spherePos[i].y - sphereRadius[i] ), 
-        //     //     (int) sphereRadius[i]*2, 
-        //     //     (int) sphereRadius[i]*2, 
-        //     //     0, 360);
-        // }
+        g.setColor(Color.black);
+        for (int i = 0; i < spheres; i++)
+        {
+            g.drawArc(
+                (int) ( spherePos[i].x - sphereRadius[i] ), 
+                (int) ( spherePos[i].y - sphereRadius[i] ), 
+                (int) sphereRadius[i]*2, 
+                (int) sphereRadius[i]*2, 
+                0, 360);
+        }
 
         Vector2 rayStart = new Vector2(400, 400);
         double rayAngle = Math.atan2(Math.sin((double)frame/100), Math.cos((double)frame/100));
-        double rayDistance = 0;
+        double rayDistance = 10000;
 
         // g.setColor(Color.green);
 
-        // g.setColor(Color.red);
+        g.setColor(Color.red);
         long startTime = System.nanoTime();
         
         for (int i = 0; i < 100; i++)

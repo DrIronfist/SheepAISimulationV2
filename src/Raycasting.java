@@ -96,10 +96,4 @@ public class Raycasting {
 
         return new Raycasting.RayResult(closestIndex, closestDistance);
     }
-
-    public double hits(double a, double b, double c, double x, double y, double r)
-    {
-        // double h = r*r - ();
-        return 0;
-    }
 }
