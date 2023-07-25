@@ -14,6 +14,11 @@ public class Sheep {
    public Vector2 pos;
    public double rot;
 
+   public Sheep()
+   {
+      
+   }
+
    public Sheep(Sheep p1, Sheep p2){
       pos = p1.pos.add(p2.pos).scale(0.5);
    }
