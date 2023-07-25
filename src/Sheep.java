@@ -5,9 +5,10 @@ public class Sheep {
    public static double starveRate,  thirstRate = 0.01;
 
    public static double maxSpeed = 1;
-   public static double maxTurnSpeed = .2;
+   public static double maxTurnSpeed = .02;
 
    public static double ViewDistance = 100;
+   public static double ViewAngle = Math.PI/4;
 
    public static int maxLifeSpan = 1000;
    public static int matingReq = 180;

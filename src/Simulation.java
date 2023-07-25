@@ -5,6 +5,7 @@ public class Simulation {
     public ArrayList<Vector2> food;
 
     double mapSize = 800;
+    int StartingSheep = 20;
 
     public void spawnRandomSheep()
     {
@@ -19,17 +20,18 @@ public class Simulation {
     {
         allSheep = new ArrayList<Sheep>();
 
-        spawnRandomSheep();
-        spawnRandomSheep();
-        spawnRandomSheep();
-        spawnRandomSheep();
-        spawnRandomSheep();
-        spawnRandomSheep();
-        spawnRandomSheep();
-        spawnRandomSheep();
+        for (int i = 0; i < StartingSheep; i++)
+        {
+            spawnRandomSheep();
+        }
 
 
         food = new ArrayList<Vector2>();
+    }
+
+    private double Clamp(double val, double min, double max)
+    {
+        return Math.max(Math.min(val, max), min);
     }
 
     public void Tick()
@@ -47,7 +49,7 @@ public class Simulation {
                 double dist = fpos.sub(sheep.pos).magnitude();
                 double angle = Math.atan2(fpos.y-sheep.pos.y, fpos.x-sheep.pos.x);
                 double angleDif = Raycasting.compareAngles(sheep.rot, angle);
-                if (dist < nearestFoodD && Math.abs(angleDif) > Math.PI/4)
+                if (dist < nearestFoodD && Math.abs(angleDif) < +Sheep.ViewAngle)
                 {
                     nearestFoodD = dist;
                     nearestFoodAngle = angleDif;
@@ -55,29 +57,31 @@ public class Simulation {
                 }
             }
 
+            sheep.age = nearestFood;
+
             // Sheep AI (Temp)
             double MoveSpeed;
             double TurnSpeed;
 
             // Epic AI
             MoveSpeed = 1;
-            TurnSpeed = Math.signum(nearestFoodAngle);
+            TurnSpeed =  nearestFoodAngle > 0? 1:-1;
 
             // Eating
-            double EatingRange = 5; // Temp Var
+            double EatingRange = 10; // Temp Var
             if (nearestFoodD < EatingRange )
             {
-                
                 food.remove(nearestFood);
             }
 
             // Movement
             sheep.rot = sheep.rot + TurnSpeed*Sheep.maxTurnSpeed;
-            sheep.pos = sheep.pos.add(Vector2.polar(MoveSpeed * Sheep.maxSpeed, sheep.rot));
+            Vector2 newpos = sheep.pos.add(Vector2.polar(MoveSpeed * Sheep.maxSpeed, sheep.rot)); 
+            sheep.pos = new Vector2(Clamp(newpos.x, 0, mapSize), Clamp(newpos.y, 0, mapSize));
         }
 
         // Adding Food
-        if (food.size() < 100)
+        if (food.size() < 200)
             food.add(new Vector2(Math.random()*mapSize, Math.random()*mapSize));
     }
 }

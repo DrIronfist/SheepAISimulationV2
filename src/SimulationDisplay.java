@@ -64,21 +64,28 @@ class MyPanelb extends JPanel implements ActionListener
             // Sheep
             drawCircle(g, sheep.pos, 10);
 
-            int arcStart = 0;//(int)(sheep.rot*180/Math.PI-45);
-            int arcEnd   = 90;//(int)(sheep.rot*180/Math.PI-45);
+            double actualRot = Math.atan2(Math.sin(sheep.rot), Math.cos(sheep.rot));
+            int arcStart = ((int)(-actualRot*180/Math.PI+360)%360);
+
+            // g.drawLine(
+            //     (int)(sheep.pos.x), 
+            //     (int)(sheep.pos.y),
+            //     (int)(sheep.pos.x +Math.cos(sheep.rot) * Sheep.ViewDistance), 
+            //     (int)(sheep.pos.y +Math.sin(sheep.rot) * Sheep.ViewDistance)
+            //     );
 
             g.drawLine(
                 (int)(sheep.pos.x), 
                 (int)(sheep.pos.y),
-                (int)(sheep.pos.x +Math.cos(sheep.rot-Math.PI/4) * Sheep.ViewDistance), 
-                (int)(sheep.pos.y +Math.sin(sheep.rot-Math.PI/4) * Sheep.ViewDistance)
+                (int)(sheep.pos.x +Math.cos(sheep.rot-Sheep.ViewAngle) * Sheep.ViewDistance), 
+                (int)(sheep.pos.y +Math.sin(sheep.rot-Sheep.ViewAngle) * Sheep.ViewDistance)
                 );
 
             g.drawLine(
                 (int)(sheep.pos.x), 
                 (int)(sheep.pos.y),
-                (int)(sheep.pos.x +Math.cos(sheep.rot+Math.PI/4) * Sheep.ViewDistance), 
-                (int)(sheep.pos.y +Math.sin(sheep.rot+Math.PI/4) * Sheep.ViewDistance)
+                (int)(sheep.pos.x +Math.cos(sheep.rot+Sheep.ViewAngle) * Sheep.ViewDistance), 
+                (int)(sheep.pos.y +Math.sin(sheep.rot+Sheep.ViewAngle) * Sheep.ViewDistance)
                 );
 
             g.drawArc(
@@ -86,13 +93,14 @@ class MyPanelb extends JPanel implements ActionListener
                 (int)(sheep.pos.y-Sheep.ViewDistance), 
                 (int)(Sheep.ViewDistance*2), 
                 (int)(Sheep.ViewDistance*2), 
-                arcStart, 
-                arcEnd
+                arcStart-45, 
+                90
                 );
         }
 
         for (Vector2 food : sim.food) {
             g.setColor(Color.green);
+            
             drawCircle(g, food, 3);
         }
 	}
