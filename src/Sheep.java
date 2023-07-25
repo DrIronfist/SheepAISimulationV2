@@ -3,7 +3,12 @@ public class Sheep {
 
    //constants
    public static double starveRate,  thirstRate = 0.01;
+
    public static double maxSpeed = 1;
+   public static double maxTurnSpeed = .2;
+
+   public static double ViewDistance = 100;
+
    public static int maxLifeSpan = 1000;
    public static int matingReq = 180;
 
@@ -13,6 +18,8 @@ public class Sheep {
    public int age = 0;
    public Vector2 pos;
    public double rot;
+
+   public Sheep pregnant;
 
    public Sheep()
    {
