@@ -15,6 +15,7 @@ public class SimulationDisplay
 			      //use setContentPane() sometimes works better then just add b/c of greater efficiency.
 
 		// Input
+        j.addMouseListener(m);
 
 		j.setVisible(true); //allows the frame to be shown.
 
@@ -23,7 +24,7 @@ public class SimulationDisplay
 
 }
 
-class MyPanelb extends JPanel implements ActionListener
+class MyPanelb extends JPanel implements ActionListener, MouseListener
 {
 	
 	private Timer time;
@@ -67,13 +68,6 @@ class MyPanelb extends JPanel implements ActionListener
             double actualRot = Math.atan2(Math.sin(sheep.rot), Math.cos(sheep.rot));
             int arcStart = ((int)(-actualRot*180/Math.PI+360)%360);
 
-            // g.drawLine(
-            //     (int)(sheep.pos.x), 
-            //     (int)(sheep.pos.y),
-            //     (int)(sheep.pos.x +Math.cos(sheep.rot) * Sheep.ViewDistance), 
-            //     (int)(sheep.pos.y +Math.sin(sheep.rot) * Sheep.ViewDistance)
-            //     );
-
             g.drawLine(
                 (int)(sheep.pos.x), 
                 (int)(sheep.pos.y),
@@ -98,10 +92,16 @@ class MyPanelb extends JPanel implements ActionListener
                 );
         }
 
-        for (Vector2 food : sim.food) {
+        for (int i = 0; i < sim.food.size(); i++)
+        {
+            // if (sim.allSheep.get(0).age == i)
+            //     g.setColor(Color.red);
+            // else
+            //     g.setColor(Color.green);
+
             g.setColor(Color.green);
             
-            drawCircle(g, food, 3);
+            drawCircle(g, sim.food.get(i), 3);
         }
 	}
 	
@@ -110,5 +110,20 @@ class MyPanelb extends JPanel implements ActionListener
 		repaint();
 	}
 
-	
+
+    public void mouseClicked(MouseEvent e)
+	{
+        sim.food.add(new Vector2(e.getX(), e.getY()-10));
+    }
+
+	public void mousePressed(MouseEvent e)
+	{
+		
+	}
+
+	public void mouseReleased(MouseEvent e)
+	{}
+
+	public void mouseEntered(MouseEvent e){}
+	public void mouseExited(MouseEvent e){}
 }

@@ -2,16 +2,21 @@
 public class Sheep {
 
    //constants
-   public static double starveRate,  thirstRate = 0.01;
+   public static double starveRate = 0.005,  thirstRate = 0.01;
 
    public static double maxSpeed = 1;
-   public static double maxTurnSpeed = .02;
+   public static double maxTurnSpeed = .05;
 
    public static double ViewDistance = 100;
    public static double ViewAngle = Math.PI/4;
 
-   public static int maxLifeSpan = 1000;
-   public static int matingReq = 180;
+   public static int LifeSpan = 3000;
+
+   public static double pregnantHungerCost = .5;
+   public static int eggMinAge = 200;
+   public static int eggChance = 100;
+   public static double MaxMateDistance = 100;
+   public static int maxPregnantPeriod = 100;
 
    //sheep variables
    public double hunger = 1;
@@ -20,7 +25,12 @@ public class Sheep {
    public Vector2 pos;
    public double rot;
 
+   // O male, 1 Female
+   public int gender;
+
+   public boolean hasEggs;
    public Sheep pregnant;
+   public int pregnantPeriod; 
 
    public Sheep()
    {
@@ -30,22 +40,4 @@ public class Sheep {
    public Sheep(Sheep p1, Sheep p2){
       pos = p1.pos.add(p2.pos).scale(0.5);
    }
-
-   public void tickActions(){
-      age++;
-      hunger -= starveRate;
-      // thirst -= thirstRate;
-   }
-
-   public void eat(){
-      hunger+= 0.75;
-      if(hunger > 1){
-         hunger = 1;
-      }
-   }
-
-
-
-
-
 }
