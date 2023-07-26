@@ -1,12 +1,37 @@
 import java.util.ArrayList;
 
+class TickStats
+{
+    public int GrassEaten = 0;
+    public int Births = 0;
+    public int Population = 0;
+    public int TotalGrass = 0;
+
+    public static String[] columns = new String[] {"GrassEaten", "Births", "Population", "TotalGrass"};
+
+    public static void toCSV(TickStats[] stats, String file_name)
+    {
+        String[][] dfArray = new String[stats.length][4];
+        for (int i = 0; i < dfArray.length; i++)
+        {
+            dfArray[i][0] = ""+stats[i].GrassEaten;
+            dfArray[i][1] = ""+stats[i].Births;
+            dfArray[i][2] = ""+stats[i].Population;
+            dfArray[i][3] = ""+stats[i].TotalGrass;
+        }
+
+        DataFrame<String> df = new DataFrame<String>(dfArray, columns);
+        df.toCSV(file_name);
+    }
+}
+
 public class Simulation {
     public ArrayList<Sheep> allSheep;
     public ArrayList<Sheep> newSheep;
     public ArrayList<Vector2> food;
 
     double mapSize = 800;
-    int StartingSheep = 10;
+    int StartingSheep = 30;
     double foodSpawnRate = 2;
     int MaxFood = 250;
 
@@ -43,7 +68,6 @@ public class Simulation {
 
     private void Birth(Sheep p1, Sheep p2)
     {
-        System.out.println("Birth");
         Sheep child = new Sheep();
         child.pos = p1.pos;
         child.rot = Math.random()*Math.PI*2;;
@@ -53,9 +77,9 @@ public class Simulation {
         newSheep.add(child);
     }
 
-    private void HandleFemaleSheep(Sheep sheep)
+    private boolean HandleFemaleSheep(Sheep sheep)
     {
-        if (sheep.age < Sheep.eggMinAge) {return;}
+        if (sheep.age < Sheep.eggMinAge) {return false;}
 
         if (!sheep.hasEggs) 
         {
@@ -89,12 +113,16 @@ public class Simulation {
                 Birth(sheep, sheep.pregnant);
                 sheep.pregnant = null;
                 sheep.hasEggs = false;
+                return true;
             }
         }
+        return false;
     }
 
-    public void Tick()
+    public TickStats Tick()
     {
+        TickStats stats = new TickStats();
+
         // Vision
         for (int j = allSheep.size()-1; j > -1; j--)
         {       
@@ -144,12 +172,16 @@ public class Simulation {
             if (nearestFoodD < EatingRange )
             {
                 sheep.hunger = 1;
+                stats.GrassEaten++;
                 food.remove(nearestFood);
             }
 
             // Female
             if (sheep.gender == 1)
-                HandleFemaleSheep(sheep);
+            {
+                if (HandleFemaleSheep(sheep))
+                    stats.Births++;
+            }
 
             sheep.hunger -= Sheep.starveRate;
 
@@ -184,5 +216,10 @@ public class Simulation {
             allSheep.add(newSheep.get(j));
             newSheep.remove(j);
         }
+
+        stats.Population = allSheep.size();
+        stats.TotalGrass = food.size();
+
+        return stats;
     }
 }
