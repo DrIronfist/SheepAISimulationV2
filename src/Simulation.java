@@ -32,8 +32,8 @@ public class Simulation {
 
     double mapSize = 800;
     int StartingSheep = 30;
-    double foodSpawnRate = 2;
-    int MaxFood = 250;
+    double foodSpawnRate = 20;
+    int MaxFood = 2500;
 
     double foodSpawn = 0;
 
